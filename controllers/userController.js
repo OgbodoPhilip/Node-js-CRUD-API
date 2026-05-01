@@ -35,14 +35,20 @@ export const createUser =  async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const allUsers = await User.find().sort({ createdAt: -1 });
+    // These run in parallel to save time
+    const [allUsers, totalCount] = await Promise.all([
+      User.find().sort({ createdAt: -1 }),
+      User.countDocuments()
+    ]);
 
-    res.status(200).json(allUsers);
+    res.status(200).json({
+      "total Users": totalCount,
+      users: allUsers
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch users: " + error.message });
   }
 };
-
 export const getUser =  async (req, res) => {
   try {
     const userId = req.params.id;

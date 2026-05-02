@@ -2,6 +2,10 @@ import { Router } from "express";
 const router = Router();
 import { createUser,getUser,getUsers,deleteUser,updateUser } from "../controllers/userController.js";
 
+router.use((req,res,next)=>{
+  console.log('getting all the users')
+  next()
+})
 
 router.post("/",createUser);
 router.get("/",getUsers);

@@ -4,9 +4,13 @@ export const createUser =  async (req, res) => {
   try {
     const { name, email, age } = req.body;
 
-    if (!name || !email || !age) {
-      return res.status(400).json({ error: "Please provide all fields" });
-    }
+  const requiredFields = ['name', 'email', 'age'];
+
+for (const field of requiredFields) {
+  if (!req.body[field]) {
+    return res.status(400).json({ error: `Please provide the user's ${field}` });
+  }
+}
 
     // 1. Create a new instance of the User model
     const newUser = new User({
@@ -49,6 +53,8 @@ export const getUsers = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch users: " + error.message });
   }
 };
+
+
 export const getUser =  async (req, res) => {
   try {
     const userId = req.params.id;

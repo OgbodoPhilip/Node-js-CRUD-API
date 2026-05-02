@@ -4,12 +4,24 @@ import User from "./models/Users.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/users.js";
 import multer from "multer";
+import session from "express-session";
+
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 const app = express();
 connectDB();
 const upload = multer()
 
+app.use(session({
+  secret: 'your_secret_key', // Keep this in an environment variable
+  resave: false,             // Don't save session if unmodified
+  saveUninitialized: false,  // Don't create session until something is stored
+  cookie: { 
+    secure: false,           // Set to true if using HTTPS
+    httpOnly: true,          // Prevents client-side JS from reading the cookie
+    maxAge: 1000 * 60 * 60   // Session expires in 1 hour
+  }
+}));
 
 app.use(upload.array())
 app.use(express.json());
@@ -21,15 +33,15 @@ app.use((req,res,next)=>{
 
 
 app.get("/", (req, res) => {
+  
   res.send("Welcome to the Node.js and Express API with MongoDB!");
 });
 app.get("/error", (req, res) => {
   throw new Error("This is a test error")
 });
 
-app.post('/form',(req,res)=>{
-console.log(req.body);
-res.send("form received")
+app.post('/register',async(req,res)=>{
+
 
 })
 

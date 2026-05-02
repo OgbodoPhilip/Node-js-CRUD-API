@@ -202,22 +202,16 @@ export const logoutUser = async (req, res) => {
 // controllers/userController.js
 export const getUserProfile = async (req, res) => {
   try {
-    // req.session.userId was set in the loginUser function
-    const user = await User.findById(req.session.userId).select('-password'); 
+    // 1. Fetch user from DB using the ID stored in the session
+    const user = await User.findById(req.session.userId);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({
-      message: "welcome to your profile",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        age: user.age
-      }
-    });
+    // 2. Use the name directly from the database object we just fetched
+    res.status(200).send(`Welcome, ${user.name}`);
+
   } catch (error) {
     res.status(500).json({ error: "Server error: " + error.message });
   }
